@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Booking App</title>
+  </head>
+
+  <body>
+    <div class="booking-container" *ngIf="bookingConfirmed">
+      <h2>Booking Confirmation</h2>
+      <div class="seat-map">
+        <div *ngFor="let row of rows; let rowIndex = index" class="seat-row">
+          <div
+            *ngFor="let seat of row.seats; let seatIndex = index"
+            class="seat"
+            [class.booked]="seat.booked"
+            [class.selected]="seat.selected"
+            (click)="toggleSeat(row, seat)"
+          >
+            {{ seat.number }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="booking-form">
+      <h2>Seat Booking</h2>
+      <label for="seatCount">Number of Seats:</label>
+      <input
+        type="number"
+        id="seatCount"
+        [(ngModel)]="seatCount"
+        min="1"
+        max="7"
+      />
+      <button (click)="bookSeats()">Book Seats</button>
+    </div>
+    <div class="seats-booked" *ngIf="bookingConfirmed">
+      <div class="booking-details">
+        <p>Seats booked: {{ bookedSeatNumbers }}</p>
+      </div>
+    </div>
+  </body>
+</html>
