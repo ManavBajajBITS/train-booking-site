@@ -46,8 +46,19 @@ export class AppComponent {
     const numberOfSeats = Number(this.seatCount);
     let remainingSeats = numberOfSeats;
 
+    //check if number of seats requested is within the limits
     if (numberOfSeats > 0 && numberOfSeats <= 7) {
       let allocatedSeats: Seat[] = [];
+
+      // mark the seats previously selected as booked
+      for (const row of this.rows) {
+        for (const seat of row.seats) {
+          if (seat.selected === true) {
+            seat.selected = false;
+            seat.booked = true;
+          }
+        }
+      }
 
       // Iterate through the rows to find available seats
       for (const row of this.rows) {
@@ -55,6 +66,7 @@ export class AppComponent {
           (seat) => !seat.booked && !seat.selected
         );
 
+        //check if it is possible to allocate in a single row
         if (availableSeats.length >= numberOfSeats) {
           allocatedSeats = availableSeats.slice(0, numberOfSeats);
           remainingSeats = 0;
@@ -62,6 +74,7 @@ export class AppComponent {
         }
       }
 
+      // If it isn't possible to allocate in a single row, try to allocate them in multiple rows
       if (remainingSeats !== 0) {
         for (const row of this.rows) {
           const availableSeats: Seat[] = row.seats.filter(
@@ -85,16 +98,15 @@ export class AppComponent {
           }
         }
       }
-
+      // If successfully allocated
       if (allocatedSeats.length === numberOfSeats) {
         const allocatedArray = allocatedSeats.map((seat) => seat.number);
         const allocatedString = allocatedArray.join(', ');
         allocatedSeats.forEach((seat) => {
-          seat.booked = true;
-          seat.selected = false;
+          //seat.booked = true;
+          seat.selected = true;
         });
         this.bookedSeatNumbers = allocatedString;
-        console.log(this.bookedSeatNumbers);
         this.bookingConfirmed = true;
       } else {
         alert('No available seats for the requested number.');
